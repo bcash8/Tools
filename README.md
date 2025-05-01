@@ -8,4 +8,4 @@ This is a collection of tools I host [online](https://tools.dewy.dev).
 
 ## Why Svelte?
 
-Svelte is able to compile to vanilla HTML, CSS, JS making the output fast and friendly for seo.
+Svelte compiles components into efficient vanilla HTML, CSS, and JavaScript, resulting in fast, optimized output that is SEO-friendly.
