@@ -2,5 +2,5 @@
 </script>
 
 <main>
-	<a href="/tools/column-to-csv">Column To CSV</a>
+	<a href="/column-to-csv">Column To CSV</a>
 </main>
