@@ -7,10 +7,10 @@
 	let lastEdited = $state('column');
 
 	$effect(() => {
-		console.log('UPATE');
 		if (lastEdited === 'column') {
 			const convertedColumnData =
 				columnData
+					.trim()
 					.split(/\r\n|\r|\n/)
 					?.map((row) => `${prefix}${row}${suffix}`)
 					.join(delimiter) ?? '';
@@ -27,9 +27,7 @@
 				`(?<=${escapedPrefix})[^${delimiter}]+(?=${escapedSuffix})`,
 				'g'
 			);
-			console.log(dataRegex);
 			const data = [...csvData.matchAll(dataRegex)];
-			console.log(data);
 			columnData = data.join('\n');
 		}
 	});
@@ -63,7 +61,6 @@
 			placeholder="Paste CSV data here"
 			bind:value={csvData}
 			oninput={() => {
-				console.log('CSV');
 				lastEdited = 'csv';
 			}}
 		></textarea>
