@@ -1,20 +1,44 @@
 <script lang="ts">
+	const STORAGE_KEY = 'column-to-csv-settings';
+
+	function loadSettings() {
+		try {
+			const raw = localStorage.getItem(STORAGE_KEY);
+			if (raw) return JSON.parse(raw);
+		} catch {
+			// ignore
+		}
+		return {};
+	}
+
+	const saved = loadSettings();
+
 	let columnData = $state('');
 	let csvData = $state('');
-	let delimiter = $state(',');
-	let prefix = $state('');
-	let suffix = $state('');
+	let delimiter = $state(saved.delimiter ?? ',');
+	let prefix = $state(saved.prefix ?? '');
+	let suffix = $state(saved.suffix ?? '');
+	let deduplicate = $state(saved.deduplicate ?? false);
 	let lastEdited = $state('column');
 
 	$effect(() => {
+		try {
+			localStorage.setItem(
+				STORAGE_KEY,
+				JSON.stringify({ delimiter, prefix, suffix, deduplicate })
+			);
+		} catch {
+			// ignore
+		}
+	});
+
+	$effect(() => {
 		if (lastEdited === 'column') {
-			const convertedColumnData =
-				columnData
-					.trim()
-					.split(/\r\n|\r|\n/)
-					?.map((row) => `${prefix}${row}${suffix}`)
-					.join(delimiter) ?? '';
-			csvData = convertedColumnData;
+			let rows = columnData.trim().split(/\r\n|\r|\n/);
+			if (deduplicate) {
+				rows = [...new Set(rows)];
+			}
+			csvData = rows.map((row) => `${prefix}${row}${suffix}`).join(delimiter);
 		}
 	});
 
@@ -50,6 +74,10 @@
 		<input type="text" placeholder="delimiter" bind:value={delimiter} />
 		<input type="text" placeholder="prefix" bind:value={prefix} />
 		<input type="text" placeholder="suffix" bind:value={suffix} />
+		<label>
+			<input type="checkbox" bind:checked={deduplicate} />
+			Deduplicate
+		</label>
 	</div>
 	<div class="data-inputs">
 		<textarea
